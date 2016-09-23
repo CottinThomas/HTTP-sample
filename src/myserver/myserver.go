@@ -1,9 +1,10 @@
 package myserver
 
 import (
-	"fmt"
+	//"fmt"
 	"net/http"
 	"sync"
+	"text/template"
 )
 
 type MyHandler struct {
@@ -17,6 +18,13 @@ func (h *MyHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	h.count++
 	count = h.count
 	h.Unlock()
-
-	fmt.Fprintf(w, "Visitor count: %d.", count)
+	t, err := template.ParseFiles("src/template.html")
+	if err != nil {
+		panic(err)
+	}
+	err = t.ExecuteTemplate(w, "template.html", count)
+	if err != nil {
+		panic(err)
+	}
+	//fmt.Fprintf(w, "Visitor count: %d.", count)
 }
