@@ -1,11 +1,13 @@
 package myserver
 
 import (
-	"fmt"
+	//"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"text/template"
+	"bytes"
 )
 
 func TestMyHandler(t *testing.T) {
@@ -25,15 +27,25 @@ func TestMyHandler(t *testing.T) {
 			t.Fatalf("Received non-200 response: %d\n", resp.StatusCode)
 		}
 
-		expected    := fmt.Sprintf("Visitor count: %d.", i)
+		var expected bytes.Buffer
 		actual, err := ioutil.ReadAll(resp.Body)
 		
 		if err != nil {
 			t.Fatal(err)
 		}
-		
-		if expected != string(actual) {
-			t.Errorf("Expected the message '%s'\n", expected)
+				
+		temp, err := template.ParseFiles("./template.html")
+		if err != nil {
+			panic(err)
+		}
+		err = temp.ExecuteTemplate(&expected, "template.html", i)
+		if err != nil {
+			panic(err)
+		}
+
+
+		if expected.String() != string(actual) {
+			t.Errorf("Expected the message '%s'\nGot '%s'", expected.String(),actual)
 		}
 	}
 }

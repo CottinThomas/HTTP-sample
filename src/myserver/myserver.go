@@ -19,7 +19,7 @@ func (h *MyHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	h.count++
 	count = h.count
 	h.Unlock()
-	t, err := template.ParseFiles("src/template.html")
+	t, err := template.ParseFiles("./template.html")
 	if err != nil {
 		panic(err)
 	}
